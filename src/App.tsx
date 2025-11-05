@@ -42,7 +42,7 @@ export default function Portfolio() {
       title: "Back-End Web Developer - Final Project",
       description: "Team-based project developing a PHP and MySQL web application for managing products, transactions, suppliers, and users. Contributed to administrative backend development, including authentication, access control, and admin interface logic.",
       tags: ["PHP", "MySQL", "Authentication", "Backend"],
-      github: "https://github.com/Krisnaarji",
+      github: "github.com/Ramasataka/inve-barang",
       type: "Academic"
     },
     {
@@ -56,7 +56,7 @@ export default function Portfolio() {
       title: "Secure Web Programming",
       description: "Final project focused on implementing secure web development practices and protocols to ensure data protection and system integrity.",
       tags: ["Web Security", "Secure Coding", "PHP"],
-      github: "https://github.com/Krisnaarji",
+      github: "github.com/Ramasataka/express-js-uas",
       type: "Academic"
     },
     {
@@ -375,7 +375,7 @@ export default function Portfolio() {
                 ))}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20">
+            <div className="bg-gradient-to-br from-pink-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20">
               <h4 className="text-xl font-semibold text-white mb-4">Design & Creative Tools</h4>
               <div className="flex flex-wrap gap-2">
                 {skills.design.map((tool, i) => (
