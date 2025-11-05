@@ -113,7 +113,7 @@ export default function Portfolio() {
     tags: ["Market Research", "UX Research", "Business Development", "Startup"]
   };
 
-  const scrollToSection = (id) => {
+  const scrollToSection = (id:string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
   };
