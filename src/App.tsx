@@ -7,16 +7,11 @@ import {
   CheckCircle2, LayoutTemplate, BarChart3, ListChecks
 } from 'lucide-react';
 
-// --- HELPER FUNCTION UNTUK GAMBAR ---
-// Fungsi ini otomatis menambahkan base URL repository agar gambar muncul di deploy
 const resolvePath = (path: string) => {
-  // Jika path adalah link eksternal (http/https), biarkan saja
   if (path.startsWith('http')) return path;
   
-  // Ambil base URL dari Vite Config (otomatis '/' di localhost, '/repo-name/' di prod)
   const baseUrl = import.meta.env.BASE_URL;
   
-  // Hapus slash di depan path jika ada, lalu gabung dengan baseUrl
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   return `${baseUrl}${cleanPath}`;
 };
@@ -54,7 +49,6 @@ const ProjectImageGallery = ({ images }: { images: ImageItem[] }) => {
       >
         {images.map((img, idx) => (
           <div key={idx} className="min-w-full h-full relative">
-            {/* FIX: Menggunakan resolvePath disini */}
             <img 
               src={resolvePath(img.src)} 
               alt={img.title} 
