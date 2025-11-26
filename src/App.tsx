@@ -604,9 +604,9 @@ export default function Portfolio() {
                     <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/50"></div><div className="w-3 h-3 rounded-full bg-yellow-500/50"></div><div className="w-3 h-3 rounded-full bg-green-500/50"></div></div>
                   </div>
                   <div className="relative flex-grow bg-slate-900 overflow-y-auto group">
-                    {/* FIX: Menggunakan resolvePath disini */}
+
                     <img 
-                      src={resolvePath('images/renta-desain.jpg')} 
+                      src={resolvePath('images/renta-desain.png')} 
                       alt="Renta Landing Page Mockup" 
                       className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
                     />
