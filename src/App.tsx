@@ -1,14 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
   Github, Linkedin, Mail, Menu, X, Code, Briefcase, BookOpen, 
-  MapPin, GraduationCap, Award, ChevronLeft, ChevronRight, Circle, 
+  MapPin, GraduationCap, Award, ChevronLeft, ChevronRight, 
   ArrowLeft, ArrowRight, ExternalLink,
   Users, Activity, Database, Gift, Heart, Share2, Target, Wallet, DollarSign,
   CheckCircle2, LayoutTemplate, BarChart3, ListChecks
 } from 'lucide-react';
 
-// --- SUB-COMPONENT: IMAGE GALLERY ---
-const ProjectImageGallery = ({ images }) => {
+// INTERFACES (Definisi Tipe Data untuk TypeScript)
+interface ImageItem {
+  src: string;
+  title: string;
+  description: string;
+}
+
+interface BMCItem {
+  title: string;
+  icon: React.ReactNode;
+  items: string[];
+}
+
+// SUB-COMPONENT: IMAGE GALLERY
+const ProjectImageGallery = ({ images }: { images: ImageItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextImage = () => {
@@ -54,8 +67,8 @@ const ProjectImageGallery = ({ images }) => {
   );
 };
 
-// --- SUB-COMPONENT: BMC CAROUSEL ---
-const BMCCarousel = ({ data }) => {
+// SUB-COMPONENT: BMC CAROUSEL
+const BMCCarousel = ({ data }: { data: BMCItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(1);
 
@@ -124,16 +137,16 @@ const BMCCarousel = ({ data }) => {
   );
 };
 
-// --- MAIN COMPONENT ---
+// MAIN COMPONENT
 export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('default'); 
   
-  // REF UNTUK CASE STUDY SECTION (Agar bisa di-scroll otomatis)
-  const caseStudyRef = useRef(null);
+  // REF FIX: Menambahkan tipe generic <HTMLDivElement>
+  const caseStudyRef = useRef<HTMLDivElement>(null);
 
-  // --- DATA ---
+  // DATA
   const skills = {
     languages: ["PHP", "JavaScript", "Python", "C++"],
     frameworks: ["Laravel", "Express.js", "React", "Bootstrap", "Tailwind CSS"],
@@ -215,6 +228,21 @@ export default function Portfolio() {
   const spotlightProjects = [
     {
       id: "p1",
+      title: "Company Email System",
+      subtitle: "Python Automation & UI Integration",
+      description: "A comprehensive visual tour of the Python-based Email Automation system interface. This desktop application features secure login, real-time recipient search, and automated email dispatching with attachment support.",
+      link: "https://github.com/Ramasataka/python-email", 
+      images: [
+        { src: "/images/login.png", title: "Secure Login Interface", description: "Secure user authentication page serving as the main system gateway." },
+        { src: "/images/home.png", title: "Admin Dashboard", description: "Central navigation hub for accessing email sending features and message history." },
+        { src: "/images/select.png", title: "Recipient Search", description: "Real-time recipient search feature for efficient email dispatch." },
+        { src: "/images/isiEmail.png", title: "Email Composition", description: "Complete email composition form with subject, body, and attachment support." },
+        { src: "/images/emailTerkirim.png", title: "Success Feedback", description: "Visual notification (Popup) confirming successful email delivery." },
+        { src: "/images/riwayat.png", title: "Sent History Log", description: "History table to track email delivery status and timestamps." }
+      ]
+    },
+    {
+      id: "p2",
       title: "Red Studio Website",
       subtitle: "Modern Agency Portfolio",
       description: "Modern & Responsive Company Profile tailored for a creative branding agency. Built with React & Tailwind CSS, featuring a dark-themed immersive UI, interactive sliders, and a focus on strong typography.",
@@ -229,22 +257,7 @@ export default function Portfolio() {
         { src: "/images/red-other.png", title: "Other Services Navigation", description: "Quick navigation grid allowing users to explore other services easily." },
         { src: "/images/red-contact.png", title: "Contact Modal Form", description: "Clean, user-friendly overlay contact form designed to increase client conversion." }
       ]
-    },
-    {
-      id: "p2",
-      title: "Company Email System",
-      subtitle: "Python Automation & UI Integration",
-      description: "A comprehensive visual tour of the Python-based Email Automation system interface. This desktop application features secure login, real-time recipient search, and automated email dispatching with attachment support.",
-      link: "https://github.com/Ramasataka/python-email", 
-      images: [
-        { src: "/images/login.png", title: "Secure Login Interface", description: "Secure user authentication page serving as the main system gateway." },
-        { src: "/images/home.png", title: "Admin Dashboard", description: "Central navigation hub for accessing email sending features and message history." },
-        { src: "/images/select.png", title: "Recipient Search", description: "Real-time recipient search feature for efficient email dispatch." },
-        { src: "/images/isiEmail.png", title: "Email Composition", description: "Complete email composition form with subject, body, and attachment support." },
-        { src: "/images/emailTerkirim.png", title: "Success Feedback", description: "Visual notification (Popup) confirming successful email delivery." },
-        { src: "/images/riwayat.png", title: "Sent History Log", description: "History table to track email delivery status and timestamps." }
-      ]
-    },
+    }
   ];
 
   const rentaBMC = [
@@ -326,7 +339,7 @@ export default function Portfolio() {
     tags: ["Market Research", "UX Research", "Business Development", "Startup"]
   };
 
-  // --- LOGIC HANDLERS ---
+  // LOGIC HANDLERS
   const handleNextProject = () => {
     setActiveSpotlightIndex((prev) => (prev === spotlightProjects.length - 1 ? 0 : prev + 1));
   };
@@ -335,13 +348,13 @@ export default function Portfolio() {
     setActiveSpotlightIndex((prev) => (prev === 0 ? spotlightProjects.length - 1 : prev - 1));
   };
 
-  const scrollToSection = (id) => {
+  const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
   };
 
-  // --- NEW: HANDLER UNTUK PINDAH TAB DAN SCROLL OTOMATIS KE ATAS ---
-  const handleTabChange = (tabName) => {
+  // NEW: HANDLER UNTUK PINDAH TAB DAN SCROLL OTOMATIS KE ATAS
+  const handleTabChange = (tabName: string) => {
     setActiveTab(tabName);
     
     // Scroll ke atas container Case Study dengan sedikit offset agar tidak ketutup navbar
@@ -480,7 +493,7 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* --- MASTER CAROUSEL (SPLIT LAYOUT) --- */}
+          {/* MASTER CAROUSEL (SPLIT LAYOUT) */}
           <div className="mb-24 max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-12 gap-8 items-center bg-slate-900/50 p-2 rounded-3xl">
               
@@ -504,7 +517,7 @@ export default function Portfolio() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-700 transition-all transform hover:-translate-y-1 mb-8"
                   >
-                    Visit Live Site / Project Repository <ExternalLink size={18} />
+                    Visit Live Site <ExternalLink size={18} />
                   </a>
                 )}
 
@@ -529,7 +542,7 @@ export default function Portfolio() {
               </div>
 
               {/* RIGHT COLUMN: IMAGE CAROUSEL */}
-              <div className="lg:col-span-7 w-full">
+              <div className="lg:col-span-7 w-full lg:mt-8">
                 <ProjectImageGallery 
                   key={spotlightProjects[activeSpotlightIndex].id}
                   images={spotlightProjects[activeSpotlightIndex].images} 
@@ -580,7 +593,7 @@ export default function Portfolio() {
                     <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/50"></div><div className="w-3 h-3 rounded-full bg-yellow-500/50"></div><div className="w-3 h-3 rounded-full bg-green-500/50"></div></div>
                   </div>
                   <div className="relative flex-grow bg-slate-900 overflow-y-auto group">
-                    <img src="/images/renta-desain.png" alt="Renta Landing Page Mockup" className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
+                    <img src="/images/renta-desain.jpg" alt="Renta Landing Page Mockup" className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 pointer-events-none"></div>
                     <div className="absolute bottom-6 left-6 right-6 bg-slate-900/90 backdrop-blur-sm p-4 rounded-lg border border-white/10">
                       <p className="text-sm text-gray-300">Proposed landing page design for Renta, emphasizing a clean interface with a prominent search bar and clear value propositions (Insurance, Drop Points).</p>
