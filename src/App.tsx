@@ -7,7 +7,7 @@ import {
   CheckCircle2, LayoutTemplate, BarChart3, ListChecks
 } from 'lucide-react';
 
-// INTERFACES (Definisi Tipe Data untuk TypeScript)
+// INTERFACES 
 interface ImageItem {
   src: string;
   title: string;
@@ -143,7 +143,6 @@ export default function Portfolio() {
   const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('default'); 
   
-  // REF FIX: Menambahkan tipe generic <HTMLDivElement>
   const caseStudyRef = useRef<HTMLDivElement>(null);
 
   // DATA
@@ -339,7 +338,6 @@ export default function Portfolio() {
     tags: ["Market Research", "UX Research", "Business Development", "Startup"]
   };
 
-  // LOGIC HANDLERS
   const handleNextProject = () => {
     setActiveSpotlightIndex((prev) => (prev === spotlightProjects.length - 1 ? 0 : prev + 1));
   };
@@ -353,13 +351,11 @@ export default function Portfolio() {
     setMobileMenuOpen(false);
   };
 
-  // NEW: HANDLER UNTUK PINDAH TAB DAN SCROLL OTOMATIS KE ATAS
   const handleTabChange = (tabName: string) => {
     setActiveTab(tabName);
     
-    // Scroll ke atas container Case Study dengan sedikit offset agar tidak ketutup navbar
     if (caseStudyRef.current) {
-      const yOffset = -100; // Offset untuk navbar sticky
+      const yOffset = -100; 
       const element = caseStudyRef.current;
       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
       
@@ -493,7 +489,7 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* MASTER CAROUSEL (SPLIT LAYOUT) */}
+          {/* MASTER CAROUSEL  */}
           <div className="mb-24 max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-12 gap-8 items-center bg-slate-900/50 p-2 rounded-3xl">
               
@@ -521,7 +517,7 @@ export default function Portfolio() {
                   </a>
                 )}
 
-                {/* PROJECT NAVIGATION (Below Text) */}
+                {/* PROJECT NAVIGATION */}
                 <div className="flex items-center gap-4 pt-6 border-t border-slate-700/50">
                   <button 
                     onClick={handlePrevProject}
@@ -542,7 +538,7 @@ export default function Portfolio() {
               </div>
 
               {/* RIGHT COLUMN: IMAGE CAROUSEL */}
-              <div className="lg:col-span-7 w-full lg:mt-8">
+              <div className="lg:col-span-7 w-full ">
                 <ProjectImageGallery 
                   key={spotlightProjects[activeSpotlightIndex].id}
                   images={spotlightProjects[activeSpotlightIndex].images} 
@@ -553,9 +549,9 @@ export default function Portfolio() {
           
           <hr className='border-purple-900/30 mb-20' />
 
-          {/* Case Study RENTA (ATTACH REF HERE) */}
+          {/* Case Study RENTA*/}
           <div 
-            ref={caseStudyRef} // <-- ATTACH REF HERE
+            ref={caseStudyRef}
             className="bg-gradient-to-br from-pink-900/20 to-purple-900/20 rounded-2xl p-8 border border-pink-500/20 max-w-6xl mx-auto flex flex-col min-h-[650px]"
           >
             <div className="mb-8">
@@ -630,7 +626,7 @@ export default function Portfolio() {
                 {skills.languages.map((lang, i) => (<span key={i} className="text-sm text-purple-300 bg-purple-500/20 px-3 py-2 rounded-lg">{lang}</span>))}
               </div>
             </div>
-            {/* ... (Other skill blocks remain same) ... */}
+
             <div className="bg-gradient-to-br from-pink-900/50 to-slate-800/50 p-6 rounded-xl border border-pink-500/20">
               <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2"><Briefcase size={24} className="text-pink-400" /> Frameworks & Libraries</h4>
               <div className="flex flex-wrap gap-2">
