@@ -7,6 +7,20 @@ import {
   CheckCircle2, LayoutTemplate, BarChart3, ListChecks
 } from 'lucide-react';
 
+// --- HELPER FUNCTION UNTUK GAMBAR ---
+// Fungsi ini otomatis menambahkan base URL repository agar gambar muncul di deploy
+const resolvePath = (path: string) => {
+  // Jika path adalah link eksternal (http/https), biarkan saja
+  if (path.startsWith('http')) return path;
+  
+  // Ambil base URL dari Vite Config (otomatis '/' di localhost, '/repo-name/' di prod)
+  const baseUrl = import.meta.env.BASE_URL;
+  
+  // Hapus slash di depan path jika ada, lalu gabung dengan baseUrl
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${baseUrl}${cleanPath}`;
+};
+
 // INTERFACES 
 interface ImageItem {
   src: string;
@@ -40,8 +54,9 @@ const ProjectImageGallery = ({ images }: { images: ImageItem[] }) => {
       >
         {images.map((img, idx) => (
           <div key={idx} className="min-w-full h-full relative">
+            {/* FIX: Menggunakan resolvePath disini */}
             <img 
-              src={img.src} 
+              src={resolvePath(img.src)} 
               alt={img.title} 
               className="w-full h-full object-contain bg-slate-900" 
             />
@@ -232,12 +247,12 @@ export default function Portfolio() {
       description: "A comprehensive visual tour of the Python-based Email Automation system interface. This desktop application features secure login, real-time recipient search, and automated email dispatching with attachment support.",
       link: "https://github.com/Ramasataka/python-email", 
       images: [
-        { src: "/images/login.png", title: "Secure Login Interface", description: "Secure user authentication page serving as the main system gateway." },
-        { src: "/images/home.png", title: "Admin Dashboard", description: "Central navigation hub for accessing email sending features and message history." },
-        { src: "/images/select.png", title: "Recipient Search", description: "Real-time recipient search feature for efficient email dispatch." },
-        { src: "/images/isiEmail.png", title: "Email Composition", description: "Complete email composition form with subject, body, and attachment support." },
-        { src: "/images/emailTerkirim.png", title: "Success Feedback", description: "Visual notification (Popup) confirming successful email delivery." },
-        { src: "/images/riwayat.png", title: "Sent History Log", description: "History table to track email delivery status and timestamps." }
+        { src: "images/login.png", title: "Secure Login Interface", description: "Secure user authentication page serving as the main system gateway." },
+        { src: "images/home.png", title: "Admin Dashboard", description: "Central navigation hub for accessing email sending features and message history." },
+        { src: "images/select.png", title: "Recipient Search", description: "Real-time recipient search feature for efficient email dispatch." },
+        { src: "images/isiEmail.png", title: "Email Composition", description: "Complete email composition form with subject, body, and attachment support." },
+        { src: "images/emailTerkirim.png", title: "Success Feedback", description: "Visual notification (Popup) confirming successful email delivery." },
+        { src: "images/riwayat.png", title: "Sent History Log", description: "History table to track email delivery status and timestamps." }
       ]
     },
     {
@@ -247,14 +262,14 @@ export default function Portfolio() {
       description: "Modern & Responsive Company Profile tailored for a creative branding agency. Built with React & Tailwind CSS, featuring a dark-themed immersive UI, interactive sliders, and a focus on strong typography.",
       link: "https://krisnaarji.github.io/redstudio",
       images: [
-        { src: "/images/red-hero.png", title: "Immersive Hero Section", description: "Main landing section with modern dark design and bold typography to strengthen brand identity." },
-        { src: "/images/red-services.png", title: "Service Catalog Grid", description: "Responsive grid layout displaying key agency services with minimalist iconography." },
-        { src: "/images/red-works.png", title: "Interactive Portfolio Slider", description: "Client work showcase using an interactive slider component for seamless navigation." },
-        { src: "/images/red-detail.png", title: "Service Detail Layout", description: "Detailed service page combining informative content with relevant case study visuals." },
-        { src: "/images/red-why.png", title: "Value Proposition Section", description: "Informative section explaining service benefits with hierarchical typography." },
-        { src: "/images/red-faq.png", title: "Interactive FAQ Accordion", description: "Accordion feature (Expand/Collapse) to present common questions without cluttering the UI." },
-        { src: "/images/red-other.png", title: "Other Services Navigation", description: "Quick navigation grid allowing users to explore other services easily." },
-        { src: "/images/red-contact.png", title: "Contact Modal Form", description: "Clean, user-friendly overlay contact form designed to increase client conversion." }
+        { src: "images/red-hero.png", title: "Immersive Hero Section", description: "Main landing section with modern dark design and bold typography to strengthen brand identity." },
+        { src: "images/red-services.png", title: "Service Catalog Grid", description: "Responsive grid layout displaying key agency services with minimalist iconography." },
+        { src: "images/red-works.png", title: "Interactive Portfolio Slider", description: "Client work showcase using an interactive slider component for seamless navigation." },
+        { src: "images/red-detail.png", title: "Service Detail Layout", description: "Detailed service page combining informative content with relevant case study visuals." },
+        { src: "images/red-why.png", title: "Value Proposition Section", description: "Informative section explaining service benefits with hierarchical typography." },
+        { src: "images/red-faq.png", title: "Interactive FAQ Accordion", description: "Accordion feature (Expand/Collapse) to present common questions without cluttering the UI." },
+        { src: "images/red-other.png", title: "Other Services Navigation", description: "Quick navigation grid allowing users to explore other services easily." },
+        { src: "images/red-contact.png", title: "Contact Modal Form", description: "Clean, user-friendly overlay contact form designed to increase client conversion." }
       ]
     }
   ];
@@ -304,7 +319,7 @@ export default function Portfolio() {
       title: "Revenue Streams",
       icon: <DollarSign size={24} />,
       items: ["Transaction Fees", "Insurance Fees", "Premium Membership", "Advertising"]
-    }
+    },
   ];
 
   const education = [
@@ -589,7 +604,12 @@ export default function Portfolio() {
                     <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/50"></div><div className="w-3 h-3 rounded-full bg-yellow-500/50"></div><div className="w-3 h-3 rounded-full bg-green-500/50"></div></div>
                   </div>
                   <div className="relative flex-grow bg-slate-900 overflow-y-auto group">
-                    <img src="/images/renta-desain.jpg" alt="Renta Landing Page Mockup" className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"/>
+                    {/* FIX: Menggunakan resolvePath disini */}
+                    <img 
+                      src={resolvePath('images/renta-desain.jpg')} 
+                      alt="Renta Landing Page Mockup" 
+                      className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 pointer-events-none"></div>
                     <div className="absolute bottom-6 left-6 right-6 bg-slate-900/90 backdrop-blur-sm p-4 rounded-lg border border-white/10">
                       <p className="text-sm text-gray-300">Proposed landing page design for Renta, emphasizing a clean interface with a prominent search bar and clear value propositions (Insurance, Drop Points).</p>
