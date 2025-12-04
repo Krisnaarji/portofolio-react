@@ -1,22 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Github, Linkedin, Mail, Menu, X, Code, Briefcase, BookOpen, 
-  MapPin, GraduationCap, Award, ChevronLeft, ChevronRight, 
-  ArrowLeft, ArrowRight, ExternalLink,
-  Users, Activity, Database, Gift, Heart, Share2, Target, Wallet, DollarSign,
-  CheckCircle2, LayoutTemplate, BarChart3, ListChecks
+  Github, Linkedin, Mail, Menu, X, Code, Briefcase, 
+  MapPin, GraduationCap, ChevronLeft, ChevronRight, 
+  ArrowRight, ExternalLink, Users, Activity, Database, Gift, 
+  Heart, Share2, Target, Wallet, DollarSign, 
+  LayoutTemplate, BarChart3, Terminal, Cpu, Globe,
+  
 } from 'lucide-react';
 
+// UTILS
 const resolvePath = (path: string) => {
   if (path.startsWith('http')) return path;
-  
-  const baseUrl = import.meta.env.BASE_URL;
-  
+  const baseUrl = import.meta.env.BASE_URL || '';
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   return `${baseUrl}${cleanPath}`;
 };
 
-// INTERFACES 
+// INTERFACES
 interface ImageItem {
   src: string;
   title: string;
@@ -29,22 +29,21 @@ interface BMCItem {
   items: string[];
 }
 
-// SUB-COMPONENT: IMAGE GALLERY
+// --- SUB-COMPONENTS ---
+
+// 1. FUTURISTIC IMAGE GALLERY
 const ProjectImageGallery = ({ images }: { images: ImageItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
+  const nextImage = () => setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  const prevImage = () => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
 
   return (
-    <div className="relative group bg-slate-800 rounded-2xl border border-purple-500/20 shadow-2xl overflow-hidden aspect-video">
+    <div className="relative group rounded-3xl overflow-hidden aspect-video border border-white/10 bg-neutral-900/50 shadow-2xl shadow-cyan-500/10">
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent z-10 pointer-events-none mix-blend-overlay"></div>
+      
       <div 
-        className="flex h-full transition-transform duration-500 ease-in-out"
+        className="flex h-full transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {images.map((img, idx) => (
@@ -52,88 +51,96 @@ const ProjectImageGallery = ({ images }: { images: ImageItem[] }) => {
             <img 
               src={resolvePath(img.src)} 
               alt={img.title} 
-              className="w-full h-full object-contain bg-slate-900" 
+              className="w-full h-full object-contain bg-neutral-950" 
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950/95 to-transparent p-6 text-center md:text-left">
-              <h4 className="text-xl font-bold text-white mb-1">{img.title}</h4>
-              <p className="text-gray-300 text-sm">{img.description}</p>
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent p-8 pt-20 backdrop-blur-[2px]">
+              <h4 className="text-2xl font-bold text-white mb-2 font-sans tracking-tight">{img.title}</h4>
+              <p className="text-gray-400 font-mono text-sm border-l-2 border-cyan-500 pl-3">{img.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-purple-600/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10">
-        <ChevronLeft size={24} />
-      </button>
-      <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-purple-600/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10">
-        <ChevronRight size={24} />
-      </button>
-      
-      <div className="absolute top-4 left-4 bg-black/50 px-3 py-1 rounded-full text-xs text-white backdrop-blur-sm z-10">
-        {currentIndex + 1} / {images.length}
+      <div className="absolute bottom-8 right-8 flex gap-2 z-20">
+        <button onClick={prevImage} className="p-3 rounded-full bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/50 text-white transition-all backdrop-blur-md">
+          <ChevronLeft size={20} />
+        </button>
+        <button onClick={nextImage} className="p-3 rounded-full bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/50 text-white transition-all backdrop-blur-md">
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      <div className="absolute top-6 left-6 px-3 py-1 rounded-full bg-black/60 border border-white/10 text-xs font-mono text-cyan-400 z-20">
+        IMG_0{currentIndex + 1} / 0{images.length}
       </div>
     </div>
   );
 };
 
-// SUB-COMPONENT: BMC CAROUSEL
+// 2. BMC CAROUSEL COMPONENT
 const BMCCarousel = ({ data }: { data: BMCItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(1);
 
+  // Responsive check
   useEffect(() => {
-    const handleResize = () => {
-      setItemsPerView(window.innerWidth >= 768 ? 2 : 1);
-    };
+    const handleResize = () => setItemsPerView(window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const maxIndex = Math.ceil(data.length - itemsPerView);
+  const maxIndex = Math.max(0, data.length - itemsPerView);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
-  };
+  const nextSlide = () => setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+  const prevSlide = () => setCurrentIndex((prev) => Math.max(prev - 1, 0));
 
   return (
-    <div className="relative group h-full flex flex-col">
-      <div className="flex justify-between items-end mb-4 px-2">
-        <h5 className="text-xl font-bold text-white border-l-4 border-pink-500 pl-3">
-          Business Strategy (BMC)
+    <div className="relative w-full h-full flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-500">
+      <div className="flex justify-between items-end mb-6">
+        <h5 className="text-white font-bold flex items-center gap-2">
+          <BarChart3 className="text-cyan-500" size={20}/> Strategic Model
         </h5>
         <div className="flex gap-2">
-          <button onClick={prevSlide} className="bg-slate-700 hover:bg-pink-600 text-white p-2 rounded-full transition-all"><ChevronLeft size={20} /></button>
-          <button onClick={nextSlide} className="bg-slate-700 hover:bg-pink-600 text-white p-2 rounded-full transition-all"><ChevronRight size={20} /></button>
+          <button 
+            onClick={prevSlide} 
+            disabled={currentIndex === 0}
+            className="p-2 rounded-full bg-white/5 border border-white/10 text-white hover:bg-cyan-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button 
+            onClick={nextSlide} 
+            disabled={currentIndex === maxIndex}
+            className="p-2 rounded-full bg-white/5 border border-white/10 text-white hover:bg-cyan-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl flex-grow">
+      <div className="overflow-hidden -mx-2 px-2 pb-4 flex-grow">
         <div 
-          className="flex transition-transform duration-500 ease-in-out h-full"
-          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+          className="flex gap-4 transition-transform duration-500 ease-out h-full"
+          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView + (itemsPerView > 1 ? 1 : 0))}%)` }} // Rough adjustment for gap
         >
-          {data.map((item, idx) => (
+          {data.map((item, i) => (
             <div 
-              key={idx} 
-              className="min-w-full md:min-w-[50%] p-2 box-border h-full" 
+              key={i} 
+              className="flex-shrink-0 w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.66rem)] h-full"
             >
-              <div className="bg-slate-800/80 h-full p-6 rounded-xl border border-pink-500/20 hover:border-pink-500/50 transition-all hover:bg-slate-800 flex flex-col shadow-lg">
-                <div className="flex items-center gap-3 mb-4 border-b border-slate-700 pb-3">
-                  <div className="p-2 bg-pink-500/10 rounded-lg text-pink-400">
+              <div className="bg-black/40 p-6 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all group h-full flex flex-col">
+                <div className="flex items-center gap-3 mb-4 text-white border-b border-white/5 pb-3">
+                  <div className="p-2 bg-cyan-500/20 rounded-lg text-cyan-400 group-hover:text-white transition-colors">
                     {item.icon}
                   </div>
-                  <h6 className="font-bold text-white text-sm uppercase tracking-wider">{item.title}</h6>
+                  <h5 className="font-bold text-sm uppercase tracking-wider">{item.title}</h5>
                 </div>
-                <ul className="space-y-2 flex-grow overflow-y-auto custom-scrollbar">
-                  {item.items.map((point, i) => (
-                    <li key={i} className="text-gray-300 text-sm flex items-start gap-2 leading-relaxed">
-                      <span className="text-pink-500/50 mt-1.5 text-[8px]">●</span>
-                      <span>{point}</span>
+                <ul className="space-y-3 flex-grow overflow-y-auto">
+                  {item.items.map((t, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-400">
+                      <span className="text-cyan-500/50 mt-1">●</span>
+                      <span>{t}</span>
                     </li>
                   ))}
                 </ul>
@@ -146,90 +153,85 @@ const BMCCarousel = ({ data }: { data: BMCItem[] }) => {
   );
 };
 
+// 3. TECH BADGE
+const TechBadge = ({ children }: { children: React.ReactNode }) => (
+  <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-mono font-medium bg-cyan-500/5 text-cyan-300 border border-cyan-500/20 shadow-[0_0_10px_-5px_rgba(6,182,212,0.5)]">
+    {children}
+  </span>
+);
+
 // MAIN COMPONENT
 export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('default');
+  const [scrolled, setScrolled] = useState(false);
   const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState('default'); 
-  
-  const caseStudyRef = useRef<HTMLDivElement>(null);
 
-  // DATA
-  const skills = {
-    languages: ["PHP", "JavaScript", "Python", "C++"],
-    frameworks: ["Laravel", "Express.js", "React", "Bootstrap", "Tailwind CSS"],
-    databases: ["MySQL", "MongoDB"],
-    tools: ["Git", "GitHub", "Postman", "VS Code", "PHPStorm"],
-    other: ["Indonesian (Native)", "English"],
-    design: ["Figma", "Wireframes", "Canva", "UI/UX Design", "Prototyping"]
+  // Scroll Listener for Navbar
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
   };
 
+  // --- DATA SECTIONS ---
   const experience = [
     {
       company: "Red System",
       role: "Web Developer Intern",
-      period: "August 2025 - November 2025",
-      description: "Developed modern website design for Red Studio using React and Tailwind CSS, focusing on responsive design and user experience.",
-      skills: ["React", "Tailwind CSS", "Web Design"]
+      period: "Aug '25 - Nov '25",
+      description: "Architected modern frontend interfaces utilizing React ecosystem.",
+      skills: ["React", "Tailwind", "UX"]
     },
     {
       company: "BPKAD Badung",
-      role: "Junior IT Consultant",
+      role: "Jr. IT Consultant",
       period: "2024",
-      description: "Provided IT consulting services for the Regional Financial and Asset Management Agency of Badung.",
-      skills: ["IT Consulting", "System Analysis"]
+      description: "Optimized regional asset management workflows through IT consultation.",
+      skills: ["Analysis", "Consulting"]
     },
     {
       company: "Inet Global",
-      role: "Network Engineer Intern",
+      role: "Network Engineer",
       period: "2021",
-      description: "Gained hands-on experience in network engineering and infrastructure management.",
-      skills: ["Network Engineering", "Infrastructure"]
+      description: "Managed physical infrastructure and network topology integrity.",
+      skills: ["Network", "Hardware"]
     }
   ];
 
   const projects = [
     {
-      title: "Back-End Web Developer - Final Project",
-      description: "Team-based project developing a PHP and MySQL web application for managing products, transactions, suppliers, and users. Contributed to administrative backend development.",
-      tags: ["PHP", "MySQL", "Authentication", "Backend"],
-      github: "github.com/Ramasataka/inve-barang",
-      type: "Academic"
+      title: "Inve-Barang System",
+      desc: "Comprehensive inventory management with supplier tracking.",
+      tech: ["PHP", "MySQL"],
+      link: "github.com/Ramasataka/inve-barang",
+      type: "Full Stack"
     },
     {
-      title: "Network Programming - Email Automation",
-      description: "Collaborative project focused on creating a Python application for automated email delivery via SMTP with SSL security.",
-      tags: ["Python", "SMTP", "SSL", "Automation"],
-      github: "https://github.com/Ramasataka/python-email",
-      type: "Academic"
+      title: "Secure Python Mailer",
+      desc: "Automated SMTP client with SSL encryption layers.",
+      tech: ["Python", "SMTP", "Security"],
+      link: "github.com/Ramasataka/python-email",
+      type: "Automation"
     },
     {
-      title: "Secure Web Programming",
-      description: "Final project focused on implementing secure web development practices and protocols to ensure data protection and system integrity.",
-      tags: ["Web Security", "Secure Coding", "PHP"],
-      github: "github.com/Ramasataka/express-js-uas",
-      type: "Academic"
+      title: "Red Studio Portfolio",
+      desc: "High-performance agency website with immersive animations.",
+      tech: ["React", "Tailwind"],
+      link: "krisnaarji.github.io/redstudio",
+      type: "Frontend"
     },
     {
-      title: "IoT-Based Pet Care System",
-      description: "IoT project developing an automated pet care system with remote monitoring and control capabilities using sensors and actuators.",
-      tags: ["IoT", "C++", "Hardware Integration", "Sensors"],
-      github: "https://github.com/Krisnaarji",
-      type: "Academic"
-    },
-    {
-      title: "Red Studio Design",
-      description: "Internship project creating a modern, responsive website design for Red Studio with a focus on UI/UX and visual appeal.",
-      tags: ["React", "Tailwind CSS", "UI/UX", "Responsive Design"],
-      github: "https://github.com/Krisnaarji/redstudio",
-      type: "Internship"
-    },
-    {
-      title: "Battleship Game - Java",
-      description: "Classic Battleship game implementation using pure Java, demonstrating object-oriented programming principles (OOP).",
-      tags: ["Java", "OOP", "Game Development"],
-      github: "https://github.com/Krisnaarji/Battleship-JAVA",
-      type: "Academic"
+      title: "Battleship Engine",
+      desc: "Pure Java implementation of classic strategy game logic.",
+      tech: ["Java", "OOP"],
+      link: "github.com/Krisnaarji/Battleship-JAVA",
+      type: "Game Dev"
     }
   ];
 
@@ -237,461 +239,392 @@ export default function Portfolio() {
     {
       id: "p1",
       title: "Company Email System",
-      subtitle: "Python Automation & UI Integration",
-      description: "A comprehensive visual tour of the Python-based Email Automation system interface. This desktop application features secure login, real-time recipient search, and automated email dispatching with attachment support.",
-      link: "https://github.com/Ramasataka/python-email", 
+      desc: "A robust desktop application tailored for corporate environments. Features secure authentication, real-time database lookup, and automated SMTP dispatching.",
+      tech: ["Python Tkinter", "SMTP Protocol", "Security/SSL"],
+      link: "github.com/Ramasataka/python-email",
       images: [
-        { src: "images/login.png", title: "Secure Login Interface", description: "Secure user authentication page serving as the main system gateway." },
-        { src: "images/home.png", title: "Admin Dashboard", description: "Central navigation hub for accessing email sending features and message history." },
-        { src: "images/select.png", title: "Recipient Search", description: "Real-time recipient search feature for efficient email dispatch." },
-        { src: "images/isiEmail.png", title: "Email Composition", description: "Complete email composition form with subject, body, and attachment support." },
-        { src: "images/emailTerkirim.png", title: "Success Feedback", description: "Visual notification (Popup) confirming successful email delivery." },
-        { src: "images/riwayat.png", title: "Sent History Log", description: "History table to track email delivery status and timestamps." }
+        { src: "images/login.png", title: "Security Gate", description: "Encrypted login authentication interface." },
+        { src: "images/home.png", title: "Dashboard", description: "Central command hub for email operations." },
+        { src: "images/isiEmail.png", title: "Composer", description: "Rich text editor with attachment capabilities." },
+        { src: "images/emailTerkirim.png", title: "Dispatch", description: "Real-time delivery confirmation modal." }
       ]
     },
     {
       id: "p2",
-      title: "Red Studio Website",
-      subtitle: "Modern Agency Portfolio",
-      description: "Modern & Responsive Company Profile tailored for a creative branding agency. Built with React & Tailwind CSS, featuring a dark-themed immersive UI, interactive sliders, and a focus on strong typography.",
-      link: "https://krisnaarji.github.io/redstudio",
+      title: "Red Studio Agency",
+      desc: "A high-fidelity corporate profile website designed for a creative agency. Implements modern glassmorphism, responsive grids, and interactive service showcases.",
+      tech: ["React.js", "Tailwind CSS", "Vite"],
+      link: "krisnaarji.github.io/redstudio",
       images: [
-        { src: "images/red-hero.png", title: "Immersive Hero Section", description: "Main landing section with modern dark design and bold typography to strengthen brand identity." },
-        { src: "images/red-services.png", title: "Service Catalog Grid", description: "Responsive grid layout displaying key agency services with minimalist iconography." },
-        { src: "images/red-works.png", title: "Interactive Portfolio Slider", description: "Client work showcase using an interactive slider component for seamless navigation." },
-        { src: "images/red-detail.png", title: "Service Detail Layout", description: "Detailed service page combining informative content with relevant case study visuals." },
-        { src: "images/red-why.png", title: "Value Proposition Section", description: "Informative section explaining service benefits with hierarchical typography." },
-        { src: "images/red-faq.png", title: "Interactive FAQ Accordion", description: "Accordion feature (Expand/Collapse) to present common questions without cluttering the UI." },
-        { src: "images/red-other.png", title: "Other Services Navigation", description: "Quick navigation grid allowing users to explore other services easily." },
-        { src: "images/red-contact.png", title: "Contact Modal Form", description: "Clean, user-friendly overlay contact form designed to increase client conversion." }
+        { src: "images/red-hero.png", title: "Hero Section", description: "Immersive landing area with bold typography." },
+        { src: "images/red-services.png", title: "Service Grid", description: "Clean layout showcasing agency capabilities." },
+        { src: "images/red-works.png", title: "Portfolio Slider", description: "Interactive gallery of past client work." },
+        { src: "images/red-contact.png", title: "Contact Modal", description: "User-friendly overlay for client inquiries." }
       ]
     }
   ];
 
-  const rentaBMC = [
-    {
-      title: "Key Partners",
-      icon: <Users size={24} />,
-      items: ["Hobby communities & associations", "Rental providers", "Official drop points", "Insurance Partners"]
-    },
-    {
-      title: "Key Activities",
-      icon: <Activity size={24} />,
-      items: ["Platform Development", "Security Verification", "Search Algorithm", "Logistics Management"]
-    },
-    {
-      title: "Value Propositions",
-      icon: <Gift size={24} />,
-      items: ["Unique Item Access", "Delivery & Drop points", "Insurance Protection", "Trusted Rating System"]
-    },
-    {
-      title: "Customer Relations",
-      icon: <Heart size={24} />,
-      items: ["Trust via 3rd party verification", "Responsive Support", "Personalized Recommendations"]
-    },
-    {
-      title: "Customer Segments",
-      icon: <Target size={24} />,
-      items: ["Outdoor/Creative Communities", "Item Owners", "Students & Travelers", "Urban Millennials"]
-    },
-    {
-      title: "Key Resources",
-      icon: <Database size={24} />,
-      items: ["IT Infrastructure", "Verified Database", "Partner Network", "Rating System"]
-    },
-    {
-      title: "Channels",
-      icon: <Share2 size={24} />,
-      items: ["Website & Apps", "Social Media", "Community Events", "Digital Ads"]
-    },
-    {
-      title: "Cost Structure",
-      icon: <Wallet size={24} />,
-      items: ["App Maintenance", "Marketing", "Logistics Ops", "Salaries & Insurance Premiums"]
-    },
-    {
-      title: "Revenue Streams",
-      icon: <DollarSign size={24} />,
-      items: ["Transaction Fees", "Insurance Fees", "Premium Membership", "Advertising"]
-    },
-  ];
-
-  const education = [
-    {
-      degree: "Bachelor of Computer Science",
-      major: "Computer System",
-      institution: "ITB STIKOM BALI",
-      period: "2022 - Expected 2026",
-      icon: <GraduationCap className="text-purple-400" size={32} />
-    },
-    {
-      degree: "Vocational High School",
-      major: "Computer and Network Engineering",
-      institution: "SMK NEGERI 1 DENPASAR",
-      period: "2019 - 2022",
-      icon: <Award className="text-pink-400" size={32} />
-    }
-  ];
-
   const caseStudy = {
-    title: "RENTA — Sharing Economy Platform",
-    course: "Technopreneurship",
-    description: "Lead a collaborative case-based startup project identifying real-world problems in the rental market and transforming them into a technology-driven business opportunity.",
-    highlights: [
-      "Conducted market research with rental business owners",
-      "Identified inefficiencies in fragmented manual rental services",
-      "Applied Empathy Mapping and Why Analysis",
-      "Designed digital platform concept",
-      "Gained experience in problem validation"
-    ],
-    tags: ["Market Research", "UX Research", "Business Development", "Startup"]
+    title: "RENTA Platform",
+    role: "Technopreneurship",
+    desc: "A peer-to-peer sharing economy solution designed to bridge the gap in the fragmented rental market through digital transformation.",
+    stats: [
+        { label: "Market Research", value: "Verified" },
+        { label: "Business Model", value: "B2C / C2C" },
+        { label: "Prototype", value: "High Fidelity" }
+    ]
   };
 
-  const handleNextProject = () => {
-    setActiveSpotlightIndex((prev) => (prev === spotlightProjects.length - 1 ? 0 : prev + 1));
-  };
+  // FULL 9-BLOCK BMC DATA
+  const rentaBMC = [
+    { title: "Key Partners", icon: <Users size={18}/>, items: ["Community Leaders", "Equipment Vendors", "Insurance Provider", "Payment Gateway"] },
+    { title: "Key Activities", icon: <Activity size={18}/>, items: ["Platform Development", "User Verification", "Marketing", "Logistics Mgmt"] },
+    { title: "Key Resources", icon: <Database size={18}/>, items: ["Tech Infrastructure", "User Data", "Brand IP", "Funding"] },
+    { title: "Value Propositions", icon: <Gift size={18}/>, items: ["Access over Ownership", "Verified Trust System", "Instant Insurance", "Convenience"] },
+    { title: "Customer Relations", icon: <Heart size={18}/>, items: ["Community Building", "24/7 Support", "Rating System", "Self-Service"] },
+    { title: "Channels", icon: <Share2 size={18}/>, items: ["Mobile App", "Website", "Social Media", "Community Events"] },
+    { title: "Customer Segments", icon: <Target size={18}/>, items: ["Gen Z / Millennials", "Travelers", "Hobbyists", "Gig Workers"] },
+    { title: "Cost Structure", icon: <Wallet size={18}/>, items: ["Server/Dev Costs", "Marketing CAC", "Staff Salaries", "Legal/Insurance"] },
+    { title: "Revenue Streams", icon: <DollarSign size={18}/>, items: ["Transaction Fees (10%)", "Insurance Premium", "Promoted Listings", "Subscription"] },
+  ];
 
-  const handlePrevProject = () => {
-    setActiveSpotlightIndex((prev) => (prev === 0 ? spotlightProjects.length - 1 : prev - 1));
-  };
-
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    setMobileMenuOpen(false);
-  };
-
-  const handleTabChange = (tabName: string) => {
-    setActiveTab(tabName);
-    
-    if (caseStudyRef.current) {
-      const yOffset = -100; 
-      const element = caseStudyRef.current;
-      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-      
-      window.scrollTo({top: y, behavior: 'smooth'});
-    }
+  const handleSpotlightNav = (direction: 'next' | 'prev') => {
+    setActiveSpotlightIndex(prev => {
+      if (direction === 'next') return prev === spotlightProjects.length - 1 ? 0 : prev + 1;
+      return prev === 0 ? spotlightProjects.length - 1 : prev - 1;
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md z-50 border-b border-purple-500/20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-              <button onClick={() => scrollToSection('hero')} className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 transition">
-                Krisna Arji
+    <div className="min-h-screen bg-black text-slate-300 selection:bg-cyan-500/30 selection:text-cyan-200 font-sans overflow-x-hidden">
+      
+      {/* --- AMBIENT BACKGROUND --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-900/10 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[20%] right-[20%] w-[20%] h-[20%] bg-blue-900/10 rounded-full blur-[100px]"></div>
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      </div>
+
+      {/* --- FLOATING NAVBAR --- */}
+      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-[90%] md:w-auto ${scrolled ? 'scale-95' : 'scale-100'}`}>
+        <div className="bg-neutral-900/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 shadow-2xl shadow-black/50 flex items-center justify-between gap-8">
+          <button onClick={() => scrollToSection('hero')} className="text-xl font-bold text-white tracking-tighter flex items-center gap-2">
+            <span className="w-3 h-3 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
+            KA<span className="hidden md:inline text-neutral-500 font-mono text-sm">.DEV</span>
+          </button>
+
+          <div className="hidden md:flex gap-1 bg-white/5 p-1 rounded-full">
+            {['About', 'Experience', 'Projects', 'Skills'].map((item) => (
+              <button 
+                key={item}
+                onClick={() => scrollToSection(item.toLowerCase())} 
+                className="px-4 py-1.5 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+              >
+                {item}
               </button>
-            <div className="hidden md:flex gap-8">
-              <button onClick={() => scrollToSection('about')} className="text-gray-300 hover:text-purple-400 transition">About</button>
-              <button onClick={() => scrollToSection('experience')} className="text-gray-300 hover:text-purple-400 transition">Experience</button>
-              <button onClick={() => scrollToSection('projects')} className="text-gray-300 hover:text-purple-400 transition">Projects</button>
-              <button onClick={() => scrollToSection('skills')} className="text-gray-300 hover:text-purple-400 transition">Skills</button>
-              <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-purple-400 transition">Contact</button>
-            </div>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-gray-300">
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            ))}
           </div>
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 flex flex-col gap-4">
-              <button onClick={() => scrollToSection('about')} className="text-gray-300 hover:text-purple-400 transition text-left">About</button>
-              <button onClick={() => scrollToSection('experience')} className="text-gray-300 hover:text-purple-400 transition text-left">Experience</button>
-              <button onClick={() => scrollToSection('projects')} className="text-gray-300 hover:text-purple-400 transition text-left">Projects</button>
-              <button onClick={() => scrollToSection('skills')} className="text-gray-300 hover:text-purple-400 transition text-left">Skills</button>
-              <button onClick={() => scrollToSection('contact')} className="text-gray-300 hover:text-purple-400 transition text-left">Contact</button>
-            </div>
-          )}
+
+          <button onClick={() => scrollToSection('contact')} className="hidden md:block bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            Hire Me
+          </button>
+          
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-white">
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="absolute top-full mt-4 left-0 w-full bg-neutral-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col gap-2 shadow-2xl origin-top animate-in slide-in-from-top-5 fade-in">
+            {['About', 'Experience', 'Projects', 'Contact'].map((item) => (
+              <button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="p-3 text-left text-gray-300 hover:bg-white/5 rounded-xl transition-all">
+                {item}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
-      {/* Hero Section */}
-      <section id='hero' className="p-60">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-5xl md:text-7xl font-bold text-white mb-10">
-            Made Krisna Arji Suputra
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-300 mb-4">
-            Computer Science Student | Software Engineer / Developer
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 text-gray-400 mb-8">
-            <div className="flex items-center gap-2"><MapPin size={18} /><span>Denpasar, Bali</span></div>
-            <div className="flex items-center gap-2"><Mail size={18} /><span>krisnaarji@gmail.com</span></div>
-          </div>
-          <div className="flex justify-center gap-4">
-            <a href="#contact" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition">Get in Touch</a>
-            <a href="#projects" className="border-2 border-purple-500 text-purple-400 px-8 py-3 rounded-full font-semibold hover:bg-purple-500/10 transition">View Projects</a>
-          </div>
+      {/* --- HERO SECTION --- */}
+      <section id='hero' className="relative pt-40 pb-20 md:pt-60 md:pb-32 px-6 flex flex-col items-center justify-center text-center z-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-900/10 text-cyan-400 text-xs font-mono mb-8 animate-fade-in-up">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+          </span>
+          AVAILABLE FOR INTERNSHIP / WORK
+        </div>
+        
+        <h1 className="text-5xl md:text-8xl font-bold text-white tracking-tight mb-6 leading-[1.1]">
+          Krisna <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">Arji.</span>
+        </h1>
+        
+        <p className="text-lg md:text-2xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
+          Informatics Student crafting <span className="text-white">high-performance</span> web interfaces & <span className="text-white">secure</span> digital systems.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <button onClick={() => scrollToSection('projects')} className="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95">
+            <div className="absolute inset-0 bg-cyan-400 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            <span className="relative flex items-center gap-2">Explore Work <ArrowRight size={18}/></span>
+          </button>
+          <button onClick={() => scrollToSection('contact')} className="px-8 py-4 border border-white/20 hover:bg-white/5 text-white font-medium rounded-full transition-all backdrop-blur-sm">
+            Contact Me
+          </button>
+        </div>
+
+        {/* Tech Stack Strip */}
+        <div className="mt-20 flex gap-8 md:gap-16 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+            <Code size={32} /> <Terminal size={32} /> <Database size={32} /> <Cpu size={32} /> <Globe size={32} />
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="p-40 bg-slate-900/50">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-bold text-white mb-12 text-center">About Me</h3>
-          <p className="text-lg text-gray-300 text-center max-w-4xl mx-auto mb-20 leading-relaxed">
-            Passionate and enthusiastic Informatics student actively seeking opportunities to apply and grow technical skills in professional settings. I have hands-on experience in back-end development, network programming, secure web systems, and IoT integration through multiple team-based academic projects.
-          </p>
-          <div className="grid md:grid-cols-2 gap-8">
-            {education.map((edu, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-purple-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition">
-                <div className="flex items-start gap-4">
-                  <div className="mt-1">{edu.icon}</div>
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-1">{edu.degree}</h4>
-                    <p className="text-purple-300 mb-2">{edu.major}</p>
-                    <p className="text-gray-400 text-sm">{edu.institution} | {edu.period}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Experience Section */}
-      <section id="experience" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-bold text-white mb-12 text-center">Professional Experience</h3>
-          <div className="space-y-6 max-w-4xl mx-auto">
-            {experience.map((exp, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition">
-                <div className="flex flex-col md:flex-row justify-between mb-4">
-                  <div>
-                    <h4 className="text-2xl font-bold text-white">{exp.role}</h4>
-                    <p className="text-purple-300 text-lg">{exp.company}</p>
-                  </div>
-                  <span className="text-gray-400 text-sm mt-2 md:mt-0">{exp.period}</span>
-                </div>
-                <p className="text-gray-300 mb-4">{exp.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {exp.skills.map((skill, i) => (
-                    <span key={i} className="text-xs text-purple-300 bg-purple-500/20 px-3 py-1 rounded-full">{skill}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section id="projects" className="py-20 px-6 bg-slate-900/50">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-bold text-white mb-12 text-center">Featured Projects</h3>
+      {/* --- BENTO GRID LAYOUT (Experience & About) --- */}
+      <section id="about" className="py-20 px-6 max-w-7xl mx-auto z-10 relative">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           
-          {/* Grid Projects */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-            {projects.map((project, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition hover:transform hover:scale-105 flex flex-col">
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs font-semibold text-purple-400 bg-purple-500/20 px-3 py-1 rounded-full">{project.type}</span>
-                  <a href={`https://${project.github}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-purple-400 transition"><Github size={20} /></a>
-                </div>
-                <h4 className="text-xl font-bold text-white mb-3">{project.title}</h4>
-                <p className="text-gray-300 mb-4 text-sm flex-grow">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="text-xs text-gray-400 bg-slate-700/50 px-2 py-1 rounded">{tag}</span>
-                  ))}
+          {/* About Card */}
+          <div className="md:col-span-8 bg-neutral-900/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Code size={200} className="text-cyan-500 transform rotate-12"/>
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-6">Engineering the Future</h3>
+            <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl">
+              I am a Computer Science student at ITB STIKOM Bali with a relentless drive for solving complex problems. 
+              My expertise bridges the gap between <span className="text-cyan-400">Back-end Logic</span>, <span className="text-purple-400">Network Security</span>, 
+              and <span className="text-pink-400">Creative Frontend</span> execution.
+            </p>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-3 bg-black/40 px-4 py-3 rounded-xl border border-white/5">
+                <GraduationCap className="text-cyan-400"/>
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-mono">Education</p>
+                  <p className="text-white font-medium">ITB STIKOM Bali</p>
                 </div>
               </div>
-            ))}
+              <div className="flex items-center gap-3 bg-black/40 px-4 py-3 rounded-xl border border-white/5">
+                <MapPin className="text-purple-400"/>
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-mono">Location</p>
+                  <p className="text-white font-medium">Bali, Indonesia</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* MASTER CAROUSEL  */}
-          <div className="mb-24 max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-8 items-center bg-slate-900/50 p-2 rounded-3xl">
-              
-              {/* LEFT COLUMN: TEXT & CONTROLS */}
-              <div className="lg:col-span-5 p-6 md:p-8">
-                <span className="text-xs font-bold text-purple-500 tracking-widest uppercase mb-4 block">Project Spotlight</span>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          {/* Experience Stack */}
+          <div className="md:col-span-4 flex flex-col gap-6">
+            <div className="bg-neutral-900/50 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex-grow">
+              <h4 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <Briefcase size={20} className="text-cyan-400"/> Experience
+              </h4>
+              <div className="space-y-6 relative before:absolute before:inset-y-2 before:left-2 before:w-0.5 before:bg-white/10">
+                {experience.map((exp, idx) => (
+                  <div key={idx} className="relative pl-8 group">
+                    <div className="absolute left-[3px] top-2 w-2 h-2 rounded-full bg-neutral-700 group-hover:bg-cyan-500 transition-colors outline outline-4 outline-black"></div>
+                    <h5 className="text-white font-medium text-lg">{exp.company}</h5>
+                    <p className="text-xs text-cyan-400 font-mono mb-1">{exp.role}</p>
+                    <p className="text-xs text-gray-500">{exp.period}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* --- PROJECTS SECTION --- */}
+      <section id="projects" className="py-20 px-6 max-w-7xl mx-auto z-10 relative">
+        <div className="flex justify-between items-end mb-12">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">Selected Works</h2>
+            <p className="text-gray-400">Highlighting academic and internship milestones.</p>
+          </div>
+          <a href="https://github.com/Krisnaarji" target="_blank" className="hidden md:flex items-center gap-2 text-cyan-400 hover:text-white transition-colors">
+            View Github <ArrowRight size={16}/>
+          </a>
+        </div>
+
+        {/* Project Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 mb-20">
+          {projects.map((project, idx) => (
+            <a 
+              href={`https://${project.link}`} 
+              target="_blank" 
+              key={idx} 
+              className="group bg-neutral-900/40 border border-white/10 rounded-2xl p-8 hover:bg-white/[0.02] hover:border-cyan-500/30 transition-all duration-300"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="p-3 bg-white/5 rounded-lg text-white group-hover:bg-cyan-500 group-hover:text-black transition-colors">
+                  <LayoutTemplate size={24}/>
+                </div>
+                <span className="text-xs font-mono text-gray-500 group-hover:text-cyan-400 transition-colors">{project.type}</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
+              <p className="text-gray-400 mb-6">{project.desc}</p>
+              <div className="flex flex-wrap gap-2">
+                {project.tech.map((t, i) => <TechBadge key={i}>{t}</TechBadge>)}
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* DYNAMIC SPOTLIGHT SECTION  */}
+        <div className="bg-gradient-to-b from-neutral-900/60 to-black border border-white/10 rounded-3xl p-2 md:p-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/20 blur-[150px] rounded-full pointer-events-none"></div>
+          
+          <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div className="lg:col-span-5 px-6 pt-6 flex flex-col h-full justify-center">
+              <div>
+                <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold tracking-widest uppercase mb-6">
+                  Featured Spotlight {activeSpotlightIndex + 1}/{spotlightProjects.length}
+                </span>
+                <h2 className="text-4xl font-bold text-white mb-4 animate-in fade-in slide-in-from-left-4 duration-300 key={activeSpotlightIndex}">
                   {spotlightProjects[activeSpotlightIndex].title}
-                </h3>
-                <p className="text-purple-300 text-lg mb-6">
-                  {spotlightProjects[activeSpotlightIndex].subtitle}
+                </h2>
+                <p className="text-xl text-gray-300 mb-8 leading-relaxed animate-in fade-in slide-in-from-left-4 duration-500 key={activeSpotlightIndex}">
+                  {spotlightProjects[activeSpotlightIndex].desc}
                 </p>
-                <p className="text-gray-400 mb-8 leading-relaxed">
-                  {spotlightProjects[activeSpotlightIndex].description}
-                </p>
-
-                {spotlightProjects[activeSpotlightIndex].link && (
-                  <a 
-                    href={spotlightProjects[activeSpotlightIndex].link}
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-700 transition-all transform hover:-translate-y-1 mb-8"
-                  >
-                    Visit Live Site <ExternalLink size={18} />
+                <div className="flex flex-wrap gap-3 mb-10">
+                  {spotlightProjects[activeSpotlightIndex].tech.map((t, i) => (
+                    <TechBadge key={i}>{t}</TechBadge>
+                  ))}
+                </div>
+                
+                <div className="flex items-center gap-6">
+                  <a href={`https://${spotlightProjects[activeSpotlightIndex].link}`} target="_blank" className="inline-flex items-center gap-3 text-white border-b border-white pb-1 hover:text-cyan-400 hover:border-cyan-400 transition-all">
+                    View Project <ExternalLink size={16}/>
                   </a>
-                )}
-
-                {/* PROJECT NAVIGATION */}
-                <div className="flex items-center gap-4 pt-6 border-t border-slate-700/50">
-                  <button 
-                    onClick={handlePrevProject}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition group px-4 py-2 rounded-lg hover:bg-slate-800"
-                  >
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition" />
-                    Prev Project
-                  </button>
-                  <div className="h-4 w-px bg-slate-700"></div>
-                  <button 
-                    onClick={handleNextProject}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition group px-4 py-2 rounded-lg hover:bg-slate-800"
-                  >
-                    Next Project
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition" />
-                  </button>
+                  
+                  {/* Spotlight Navigation Controls */}
+                  <div className="flex gap-2 ml-auto lg:ml-0">
+                    <button onClick={() => handleSpotlightNav('prev')} className="p-3 rounded-full border border-white/10 hover:bg-white/10 text-white transition-all"><ChevronLeft size={20}/></button>
+                    <button onClick={() => handleSpotlightNav('next')} className="p-3 rounded-full border border-white/10 hover:bg-white/10 text-white transition-all"><ChevronRight size={20}/></button>
+                  </div>
                 </div>
               </div>
-
-              {/* RIGHT COLUMN: IMAGE CAROUSEL */}
-              <div className="lg:col-span-7 w-full ">
+            </div>
+            
+            <div className="lg:col-span-7">
+              {/* Using key to force re-render/animation when project changes */}
                 <ProjectImageGallery 
                   key={spotlightProjects[activeSpotlightIndex].id}
                   images={spotlightProjects[activeSpotlightIndex].images} 
                 />
-              </div>
             </div>
           </div>
-          
-          <hr className='border-purple-900/30 mb-20' />
+        </div>
+      </section>
 
-          {/* Case Study RENTA*/}
-          <div 
-            ref={caseStudyRef}
-            className="bg-gradient-to-br from-pink-900/20 to-purple-900/20 rounded-2xl p-8 border border-pink-500/20 max-w-6xl mx-auto flex flex-col min-h-[650px]"
-          >
-            <div className="mb-8">
-              <span className="text-xs font-semibold text-pink-400 bg-pink-500/20 px-3 py-1 rounded-full">Technopreneurship</span>
-              <h4 className="text-3xl font-bold text-white mt-4 mb-2">{caseStudy.title}</h4>
-              <p className="text-gray-300 mb-6 text-lg">{caseStudy.description}</p>
+      {/* --- CASE STUDY --- */}
+      <section className="py-20 px-6 max-w-7xl mx-auto z-10 relative">
+        <div className="rounded-3xl bg-neutral-900 border border-white/10 overflow-hidden">
+          <div className="grid lg:grid-cols-12 min-h-[600px]">
+            {/* Sidebar Controls */}
+            <div className="lg:col-span-4 bg-neutral-950 p-8 border-r border-white/10 flex flex-col">
+                <div className="mb-10">
+                  <h3 className="text-2xl font-bold text-white mb-2">RENTA <span className="text-cyan-500">.ID</span></h3>
+                  <p className="text-sm text-gray-500">Case Study: Technopreneurship</p>
+                </div>
+                
+                <div className="space-y-2 flex-grow">
+                  <button onClick={() => setActiveTab('default')} className={`w-full text-left p-4 rounded-xl transition-all border ${activeTab === 'default' ? 'bg-white/10 border-cyan-500/50 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                      <span className="font-bold block">01. Overview</span>
+                      <span className="text-xs opacity-70">Problem, Solution & Stats</span>
+                  </button>
+                  <button onClick={() => setActiveTab('bmc')} className={`w-full text-left p-4 rounded-xl transition-all border ${activeTab === 'bmc' ? 'bg-white/10 border-cyan-500/50 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                      <span className="font-bold block">02. Strategy</span>
+                      <span className="text-xs opacity-70">Business Model Canvas (9 Blocks)</span>
+                  </button>
+                  <button onClick={() => setActiveTab('design')} className={`w-full text-left p-4 rounded-xl transition-all border ${activeTab === 'design' ? 'bg-white/10 border-cyan-500/50 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                      <span className="font-bold block">03. Interface</span>
+                      <span className="text-xs opacity-70">UI/UX Design Mockup</span>
+                  </button>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-white/10">
+                    <p className="text-xs text-gray-600 uppercase font-mono mb-3">Project Role</p>
+                    <p className="text-white">Lead Researcher & UI Designer</p>
+                </div>
             </div>
 
-            {/* Dynamic Content */}
-            <div className="flex-grow relative">
+            {/* Content Area */}
+            <div className="lg:col-span-8 p-8 md:p-12 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-opacity-30 relative overflow-hidden">
               {activeTab === 'default' && (
-                <div className="bg-slate-800/50 rounded-xl p-8 border border-white/5 animate-fadeIn h-full flex flex-col justify-center">
-                  <h5 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><ListChecks className="text-pink-500" /> Key Achievements</h5>
-                  <ul className="space-y-4">
-                    {caseStudy.highlights.map((highlight, i) => (
-                      <li key={i} className="flex items-start gap-3 group">
-                        <span className="text-pink-400 mt-1 group-hover:text-pink-300 transition"><CheckCircle2 size={20} /></span>
-                        <span className="text-gray-300 group-hover:text-white transition">{highlight}</span>
-                      </li>
+                <div className="animate-in fade-in slide-in-from-right-10 duration-500 h-full flex flex-col justify-center">
+                  <h4 className="text-3xl font-bold text-white mb-6 leading-tight">{caseStudy.desc}</h4>
+                  <div className="grid grid-cols-3 gap-6 mt-12">
+                    {caseStudy.stats.map((stat, i) => (
+                      <div key={i} className="bg-black/40 p-6 rounded-2xl border border-white/5 backdrop-blur-sm">
+                        <p className="text-3xl font-bold text-cyan-400 mb-1">{stat.value}</p>
+                        <p className="text-xs text-gray-400 font-mono uppercase tracking-wider">{stat.label}</p>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
               {activeTab === 'bmc' && (
-                <div className="animate-fadeIn h-full">
-                  <BMCCarousel data={rentaBMC} />
-                </div>
+                <BMCCarousel data={rentaBMC} />
               )}
 
               {activeTab === 'design' && (
-                <div className="bg-slate-800 rounded-xl border border-pink-500/20 overflow-hidden animate-fadeIn h-full flex flex-col">
-                  <div className="p-4 border-b border-slate-700 bg-slate-900/50 flex justify-between items-center">
-                    <h5 className="text-white font-bold flex items-center gap-2"><LayoutTemplate size={20} className="text-pink-500" /> Landing Page Design</h5>
-                    <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-500/50"></div><div className="w-3 h-3 rounded-full bg-yellow-500/50"></div><div className="w-3 h-3 rounded-full bg-green-500/50"></div></div>
-                  </div>
-                  <div className="relative flex-grow bg-slate-900 overflow-y-auto group">
-
-                    <img 
-                      src={resolvePath('images/renta-desain.png')} 
-                      alt="Renta Landing Page Mockup" 
-                      className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60 pointer-events-none"></div>
-                    <div className="absolute bottom-6 left-6 right-6 bg-slate-900/90 backdrop-blur-sm p-4 rounded-lg border border-white/10">
-                      <p className="text-sm text-gray-300">Proposed landing page design for Renta, emphasizing a clean interface with a prominent search bar and clear value propositions (Insurance, Drop Points).</p>
+                <div className="h-full flex flex-col animate-in zoom-in-95 duration-500">
+                  <div className="flex-grow bg-neutral-900 rounded-xl border border-white/10 overflow-hidden relative group">
+                    <img src={resolvePath('images/renta-desain.png')} alt="Design" className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"/>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                        <div>
+                          <h5 className="text-white font-bold text-xl">High Fidelity Prototype</h5>
+                          <p className="text-gray-400 text-sm">Figma • Interaction Design</p>
+                        </div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Tabs */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button onClick={() => handleTabChange('default')} className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl transition-all ${activeTab === 'default' ? 'bg-pink-600 text-white shadow-lg shadow-pink-900/20' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-                <ListChecks size={20} /><span className="font-medium">Achievements</span>
-              </button>
-              <button onClick={() => handleTabChange('bmc')} className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl transition-all ${activeTab === 'bmc' ? 'bg-pink-600 text-white shadow-lg shadow-pink-900/20' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-                <BarChart3 size={20} /><span className="font-medium">Business Strategy</span>
-              </button>
-              <button onClick={() => handleTabChange('design')} className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl transition-all ${activeTab === 'design' ? 'bg-pink-600 text-white shadow-lg shadow-pink-900/20' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-                <LayoutTemplate size={20} /><span className="font-medium">Website Design</span>
-              </button>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Skills & Contact (Standard) */}
-      <section id="skills" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-4xl font-bold text-white mb-12 text-center">Skills & Capabilities</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-purple-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20">
-              <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2"><Code size={24} className="text-purple-400" /> Programming Languages</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.languages.map((lang, i) => (<span key={i} className="text-sm text-purple-300 bg-purple-500/20 px-3 py-2 rounded-lg">{lang}</span>))}
-              </div>
-            </div>
+      {/* --- SKILLS TICKER --- */}
+      <section id="skills" className="py-10 border-y border-white/5 bg-neutral-900/50 backdrop-blur-sm overflow-hidden">
+        <div className="flex gap-12 animate-infinite-scroll min-w-full justify-center flex-wrap px-6">
+            {['JavaScript', 'React', 'Tailwind', 'PHP', 'Laravel', 'Python', 'C++', 'MySQL', 'Git', 'Figma', 'Linux', 'Networking'].map((skill, i) => (
+              <span key={i} className="text-2xl font-bold text-gray-600 hover:text-cyan-500 transition-colors cursor-default select-none">
+                {skill}
+              </span>
+            ))}
+        </div>
+      </section>
 
-            <div className="bg-gradient-to-br from-pink-900/50 to-slate-800/50 p-6 rounded-xl border border-pink-500/20">
-              <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2"><Briefcase size={24} className="text-pink-400" /> Frameworks & Libraries</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.frameworks.map((fw, i) => (<span key={i} className="text-sm text-pink-300 bg-pink-500/20 px-3 py-2 rounded-lg">{fw}</span>))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20">
-              <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2"><BookOpen size={24} className="text-purple-400" /> Databases</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.databases.map((db, i) => (<span key={i} className="text-sm text-purple-300 bg-purple-500/20 px-3 py-2 rounded-lg">{db}</span>))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-pink-900/50 to-slate-800/50 p-6 rounded-xl border border-pink-500/20">
-              <h4 className="text-xl font-semibold text-white mb-4">Development Tools</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.tools.map((tool, i) => (<span key={i} className="text-sm text-pink-300 bg-pink-500/20 px-3 py-2 rounded-lg">{tool}</span>))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-900/50 to-slate-800/50 p-6 rounded-xl border border-purple-500/20 md:col-span-2 lg:col-span-1">
-              <h4 className="text-xl font-semibold text-white mb-4">Languages</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.other.map((lang, i) => (<span key={i} className="text-sm text-purple-300 bg-purple-500/20 px-3 py-2 rounded-lg">{lang}</span>))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-pink-900/50 to-slate-800/50 p-6 rounded-xl border border-pink-500/20">
-              <h4 className="text-xl font-semibold text-white mb-4">Design & Creative Tools</h4>
-              <div className="flex flex-wrap gap-2">
-                {skills.design.map((tool, i) => (<span key={i} className="text-sm text-purple-300 bg-purple-500/20 px-3 py-2 rounded-lg">{tool}</span>))}
-              </div>
-            </div>
+      {/* --- CONTACT --- */}
+      <section id="contact" className="py-32 px-6 text-center relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <h2 className="text-5xl font-bold text-white mb-8">Ready to Collaborate?</h2>
+          <p className="text-xl text-gray-400 mb-12">
+            Currently looking for internship opportunities. Let's build something extraordinary together.
+          </p>
+          <div className="flex justify-center gap-6">
+              <a href="mailto:krisnaarji@gmail.com" className="p-4 bg-white text-black rounded-full hover:bg-cyan-400 hover:scale-110 transition-all duration-300">
+                <Mail size={24}/>
+              </a>
+              <a href="https://linkedin.com" className="p-4 bg-neutral-800 text-white border border-white/10 rounded-full hover:bg-blue-600 hover:border-blue-500 hover:scale-110 transition-all duration-300">
+                <Linkedin size={24}/>
+              </a>
+              <a href="https://github.com/Krisnaarji" className="p-4 bg-neutral-800 text-white border border-white/10 rounded-full hover:bg-black hover:border-white hover:scale-110 transition-all duration-300">
+                <Github size={24}/>
+              </a>
           </div>
         </div>
       </section>
 
-      <section id="contact" className="py-20 px-6 bg-slate-900/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-4xl font-bold text-white mb-6">Let's Connect</h3>
-          <p className="text-xl text-gray-300 mb-12">I'm always open to discussing new projects, internship opportunities, and collaborations.</p>
-          <div className="bg-gradient-to-br from-purple-900/30 to-slate-800/30 p-8 rounded-2xl border border-purple-500/20 mb-8">
-            <div className="grid md:grid-cols-4 gap-6 mb-8">
-              <div className="text-center pt-10"><Mail className="text-purple-400 mx-auto mb-2" size={32} /><p className="text-gray-400 text-sm mb-1">Email</p><a href="mailto:krisnaarji@gmail.com" className="text-white hover:text-purple-400 transition">krisnaarji@gmail.com</a></div>
-              <div className="text-center pt-10"><MapPin className="text-purple-400 mx-auto mb-2" size={32} /><p className="text-gray-400 text-sm mb-1">Location</p><p className="text-white">Denpasar, Bali</p></div>
-              <div className="text-center pt-10"><Github className="text-purple-400 mx-auto mb-2" size={32} /><p className="text-gray-400 text-sm mb-1">Github</p><p className="text-white">Krisnaarji</p></div>
-              <div className="text-center pt-10"><Linkedin className="text-purple-400 mx-auto mb-2" size={32} /><p className="text-gray-400 text-sm mb-1">Linkedin</p><p className="text-white">Krisnaarji</p></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="py-8 px-6 bg-slate-900/80 border-t border-purple-500/20">
-        <div className="max-w-7xl mx-auto text-center text-gray-400"><p>© 2024 Made Krisna Arji Suputra. Built with React & Tailwind CSS.</p></div>
+      <footer className="py-8 text-center text-gray-600 text-sm border-t border-white/5 bg-black">
+        <p>&copy; 2024 Krisna Arji. Engineered with React & Tailwind.</p>
       </footer>
     </div>
   );
