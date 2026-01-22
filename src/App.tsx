@@ -349,7 +349,7 @@ export default function Portfolio() {
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <section id='hero' className="relative pt-40 pb-20 md:pt-60 md:pb-32 px-6 flex flex-col items-center justify-center text-center z-10">
+      <section id='hero' className="relative pt-40 pb-20 md:pt-40 md:pb-32 px-6 flex flex-col items-center justify-center text-center z-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-900/10 text-cyan-400 text-xs font-mono mb-8 animate-fade-in-up">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -358,12 +358,14 @@ export default function Portfolio() {
           AVAILABLE FOR INTERNSHIP / WORK
         </div>
         
-        <h1 className="text-5xl md:text-8xl font-bold text-white tracking-tight mb-6 leading-[1.1]">
-          Krisna <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">Arji.</span>
+        <h1 className="text-6xl md:text-8xl font-bold text-white tracking-tighter mb-8 font-outfit leading-[0.9]">
+          Engineering <br className="hidden md:block"/>
+          <span className="text-zinc-500">Digital Precision.</span>
         </h1>
         
-        <p className="text-lg md:text-2xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
-          Informatics Student crafting <span className="text-white">high-performance</span> web interfaces & <span className="text-white">secure</span> digital systems.
+        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-10 leading-relaxed font-light">
+          I am <span className='font-bold text-white'>Krisna</span> <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">Arji. </span> 
+           An computer science Student bridging the gap between <span className="text-white font-medium">complex backend logic</span> and <span className="text-white font-medium">intuitive frontend design</span>.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4">
@@ -624,7 +626,7 @@ export default function Portfolio() {
       </section>
 
       <footer className="py-8 text-center text-gray-600 text-sm border-t border-white/5 bg-black">
-        <p>&copy; 2024 Krisna Arji. Engineered with React & Tailwind.</p>
+        <p>&copy; 2025 Krisna Arji. Engineered with React & Tailwind.</p>
       </footer>
     </div>
   );
