@@ -139,7 +139,7 @@ const BMCCarousel = ({ data }: { data: BMCItem[] }) => {
                 <ul className="space-y-3 flex-grow overflow-y-auto">
                   {item.items.map((t, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-sm text-gray-400">
-                      <span className="text-cyan-500/50 mt-1">●</span>
+                      <span className="text-cyan-500/50 mt-1">◆</span>
                       <span>{t}</span>
                     </li>
                   ))}
@@ -166,12 +166,31 @@ export default function Portfolio() {
   const [activeTab, setActiveTab] = useState('default');
   const [scrolled, setScrolled] = useState(false);
   const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Scroll Listener for Navbar
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Loading Screen Effect
+  useEffect(() => {
+    // Simulate loading progress
+    const interval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setLoading(false), 500); // Fade out after reaching 100%
+          return 100;
+        }
+        return prev + Math.random() * 15; // Random increment for realistic feel
+      });
+    }, 150);
+
+    return () => clearInterval(interval);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -297,6 +316,48 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-black text-slate-300 selection:bg-cyan-500/30 selection:text-cyan-200 font-sans overflow-x-hidden">
+      
+      {/* --- LOADING SCREEN --- */}
+      {loading && (
+        <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-500" style={{ opacity: loading ? 1 : 0 }}>
+          <div className="text-center">
+            {/* Animated Logo */}
+            <div className="relative mb-8">
+              <div className="w-20 h-20 mx-auto relative">
+                <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20"></div>
+                <div 
+                  className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent animate-spin"
+                  style={{ animationDuration: '1s' }}
+                ></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">KA</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Loading Text */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Loading Portfolio</h2>
+              <p className="text-gray-500 font-mono text-sm">Initializing experience...</p>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-64 mx-auto">
+              <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-300 ease-out rounded-full"
+                  style={{ width: `${Math.min(loadingProgress, 100)}%` }}
+                ></div>
+              </div>
+              <p className="text-cyan-400 font-mono text-xs mt-2">{Math.floor(Math.min(loadingProgress, 100))}%</p>
+            </div>
+          </div>
+
+          {/* Background Effects */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+      )}
       
       {/* --- AMBIENT BACKGROUND --- */}
       <div className="fixed inset-0 z-0 pointer-events-none">
